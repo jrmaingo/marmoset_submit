@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ ${#} -ne 3 ]; then
+    echo "Usage: ${0} [course] [project] [file]"
+    exit 1
+fi
+
+if [ ! -r ${3} ]; then
+    echo "file ${3} does not exist or cannot be read"
+    exit 2
+fi
+
+user=jrmaingo
+
+echo "copying file"
+#echo "Password for ${user}@linux.student.cs.uwaterloo.ca: "
+#read -s pass
+
+scp ./${3} ${user}@linux.student.cs.uwaterloo.ca:~/
+echo "finished copying file ${1}"
+
+server_commands=${pass}"TERM=xterm-256color;source /u/cs246/setup;marmoset_submit ${1} ${2} ${3};rm ${3};exit"
+
+echo "ssh-ing in"
+echo ${server_commands} | ssh ${user}@linux.student.cs.uwaterloo.ca -T
+echo "done"
